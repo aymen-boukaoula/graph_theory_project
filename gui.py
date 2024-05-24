@@ -204,6 +204,9 @@ class GraphApp(tk.Tk):
         # Effacer la coloration des arêtes
         for edge in self.graph.edges:
             self.color_edge(edge, "black")
+        
+        # Effacer la zone de texte des résultats
+        self.results_text.delete(1.0, tk.END)
 
 
 if __name__ == "__main__":

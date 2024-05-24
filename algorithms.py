@@ -52,6 +52,7 @@ def dijkstra(graph, start_vertex):
     distances = {vertex: math.inf for vertex in graph.vertices}
     distances[start_vertex] = 0
     visited = set()
+    shortest_paths = {vertex: [] for vertex in graph.vertices}
 
     while len(visited) < len(graph.vertices):
         current_vertex = min((vertex for vertex in graph.vertices if vertex not in visited), key=distances.get)
@@ -61,19 +62,23 @@ def dijkstra(graph, start_vertex):
             new_distance = distances[current_vertex] + weight
             if new_distance < distances[neighbor]:
                 distances[neighbor] = new_distance
+                shortest_paths[neighbor] = shortest_paths[current_vertex] + [(current_vertex, neighbor)]
 
-    return distances
+    return distances, shortest_paths
+
 
 
 
 def bellman_ford(graph, start_vertex):
     distances = {vertex: math.inf for vertex in graph.vertices}
     distances[start_vertex] = 0
+    shortest_paths = {vertex: [] for vertex in graph.vertices}
 
     for _ in range(len(graph.vertices) - 1):
         for edge in graph.edges:
             if distances[edge.start] + edge.weight < distances[edge.end]:
                 distances[edge.end] = distances[edge.start] + edge.weight
+                shortest_paths[edge.end] = shortest_paths[edge.start] + [(edge.start, edge.end)]
 
     # Vérifier les cycles de poids négatif
     for _ in range(len(graph.vertices) - 1):
@@ -81,7 +86,8 @@ def bellman_ford(graph, start_vertex):
             if distances[edge.start] + edge.weight < distances[edge.end]:
                 raise ValueError("Graph contains negative cycle")
 
-    return distances
+    return distances, shortest_paths
+
 
 
 def welch_powell(graph):

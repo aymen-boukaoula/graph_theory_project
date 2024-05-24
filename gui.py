@@ -126,15 +126,18 @@ class GraphApp(tk.Tk):
         start_vertex = simpledialog.askinteger("Input", "Enter start vertex:")
         if start_vertex is None:
             return
-        distances = dijkstra(self.graph, self.graph.vertices[start_vertex])
+        distances, shortest_paths = dijkstra(self.graph, self.graph.vertices[start_vertex])
         self.highlight_result(distances, "dijkstra")
+        self.highlight_shortest_path(shortest_paths)
 
     def run_bellman_ford(self):
         start_vertex = simpledialog.askinteger("Input", "Enter start vertex:")
         if start_vertex is None:
             return
-        distances = bellman_ford(self.graph, self.graph.vertices[start_vertex])
+        distances, shortest_paths = bellman_ford(self.graph, self.graph.vertices[start_vertex])
         self.highlight_result(distances, "bellman_ford")
+        self.highlight_shortest_path(shortest_paths)
+
 
     def run_stable_set(self):
         stable_set = welch_powell(self.graph)
@@ -168,6 +171,14 @@ class GraphApp(tk.Tk):
                 self.color_vertex(vertex, "red")
                 self.colored_vertices.append(vertex)
 
+    def highlight_shortest_path(self, shortest_paths):
+        for path in shortest_paths.values():
+            for start_vertex, end_vertex in path:
+                edge = self.graph.get_edge(start_vertex, end_vertex)
+                if edge is not None:
+                    self.color_edge(edge, "blue")
+
+
     def color_edge(self, edge, color):
         start_vertex, end_vertex = edge.start.label, edge.end.label
         x1, y1 = self.vertex_positions[start_vertex]
@@ -181,6 +192,7 @@ class GraphApp(tk.Tk):
         self.canvas.create_text(x, y, text=str(vertex.label), fill="white", font=("Arial", 12, "bold"))
 
     def clear_results(self):
+        # Effacer les résultats précédents
         for edge in self.colored_edges:
             self.color_edge(edge, "black")
         self.colored_edges.clear()
@@ -188,6 +200,11 @@ class GraphApp(tk.Tk):
         for vertex in self.colored_vertices:
             self.color_vertex(vertex, "black")
         self.colored_vertices.clear()
+
+        # Effacer la coloration des arêtes
+        for edge in self.graph.edges:
+            self.color_edge(edge, "black")
+
 
 if __name__ == "__main__":
     app = GraphApp()

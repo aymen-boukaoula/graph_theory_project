@@ -36,3 +36,11 @@ class Graph:
             if edge.start == vertex:
                 neighbors.append((edge.end, edge.weight))
         return neighbors
+    
+
+    def get_edge(self, start, end):
+        for edge in self.edges:
+            if edge.start == start and edge.end == end:
+                return edge
+        return None
+
